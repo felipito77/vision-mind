@@ -1,163 +1,367 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Acceso</title>
-<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/utilities/bsb-overlay/bsb-overlay.css">
-<link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/utilities/background/background.css">
-<link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/utilities/margin/margin.css">
-<link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/utilities/padding/padding.css">
-</head><!-- Contact 6 - Bootstrap Brain Component -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vision Mind | Acceso Seguro & Registro</title>
+  <link rel="stylesheet" href="login.css">
+  <link rel="icon" type="image/png" href="img/vision_mind_logo.png">
+</head>
 <body>
-    <!-- Contact 6 - Bootstrap Brain Component -->
-<section class="py-3 py-md-5 py-xl-8">
-    <div class="container">
-      <div class="row justify-content-md-center">
-        <div class="col-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
-          <h2 class="mb-4 display-5 text-center">empresa</h2>
-          <p class="text-secondary mb-5 text-center lead fs-4">Our team is available to provide prompt and helpful responses to all inquiries. You can reach us via phone, email, or by filling out the contact form below.</p>
-          <hr class="w-50 mx-auto mb-5 mb-xl-9 border-dark-subtle">
-        </div>
-      </div>
+
+  <!-- Lienzo interactivo de partículas cuánticas -->
+  <canvas id="cyber-canvas"></canvas>
+
+  <!-- Rejilla y resplandor ambiental -->
+  <div class="cyber-grid-overlay"></div>
+
+  <!-- Barra de navegación superior -->
+  <header class="cyber-header-nav">
+    <a href="Index.html" class="back-link">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+      </svg>
+      VOLVER A VISION MIND
+    </a>
+
+    <div class="system-status-indicator">
+      <span class="status-dot"></span>
+      TERMINAL SEGURA EN LÍNEA
     </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="card border border-dark rounded shadow-sm overflow-hidden">
-            <div class="card-body p-0">
-              <div class="row gy-3 gy-md-4 gy-lg-0">
-                <div class="col-12 col-lg-6 bsb-overlay background-position-center background-size-cover" style="--bsb-overlay-opacity: 0.7; background-image: url('./assets/img/contact-img-1.webp');">
-                  <div class="row align-items-lg-center justify-content-center h-100">
-                    <div class="col-11 col-xl-10">
-                      <div class="contact-info-wrapper py-4 py-xl-5">
-                        <h2 class="h1 mb-3 text-light">Get in touch</h2>
-                        <p class="lead fs-4 text-light opacity-75 mb-4 mb-xxl-5">We're always on the lookout to work with new clients. If you're interested in working with us, please get in touch in one of the following ways.</p>
-                        <div class="d-flex mb-4 mb-xxl-5">
-                          <div class="me-4 text-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-geo" viewBox="0 0 16 16">
-                              <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <h4 class="mb-3 text-light">Address</h4>
-                            <address class="mb-0 text-light opacity-75">8014 Edith Blvd NE, Albuquerque, New York, United States</address>
-                          </div>
-                        </div>
-                        <div class="row mb-4 mb-xxl-5">
-                          <div class="col-12 col-xxl-6">
-                            <div class="d-flex mb-4 mb-xxl-0">
-                              <div class="me-4 text-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-telephone-outbound" viewBox="0 0 16 16">
-                                  <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM11 .5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V1.707l-4.146 4.147a.5.5 0 0 1-.708-.708L14.293 1H11.5a.5.5 0 0 1-.5-.5z" />
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 class="mb-3 text-light">Phone</h4>
-                                <p class="mb-0">
-                                  <a class="link-light link-opacity-75 link-opacity-100-hover text-decoration-none" href="tel:+15057922430">(505) 792-2430</a>
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-12 col-xxl-6">
-                            <div class="d-flex mb-0">
-                              <div class="me-4 text-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-envelope-at" viewBox="0 0 16 16">
-                                  <path d="M2 2a2 2 0 0 0-2 2v8.01A2 2 0 0 0 2 14h5.5a.5.5 0 0 0 0-1H2a1 1 0 0 1-.966-.741l5.64-3.471L8 9.583l7-4.2V8.5a.5.5 0 0 0 1 0V4a2 2 0 0 0-2-2H2Zm3.708 6.208L1 11.105V5.383l4.708 2.825ZM1 4.217V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v.217l-7 4.2-7-4.2Z" />
-                                  <path d="M14.247 14.269c1.01 0 1.587-.857 1.587-2.025v-.21C15.834 10.43 14.64 9 12.52 9h-.035C10.42 9 9 10.36 9 12.432v.214C9 14.82 10.438 16 12.358 16h.044c.594 0 1.018-.074 1.237-.175v-.73c-.245.11-.673.18-1.18.18h-.044c-1.334 0-2.571-.788-2.571-2.655v-.157c0-1.657 1.058-2.724 2.64-2.724h.04c1.535 0 2.484 1.05 2.484 2.326v.118c0 .975-.324 1.39-.639 1.39-.232 0-.41-.148-.41-.42v-2.19h-.906v.569h-.03c-.084-.298-.368-.63-.954-.63-.778 0-1.259.555-1.259 1.4v.528c0 .892.49 1.434 1.26 1.434.471 0 .896-.227 1.014-.643h.043c.118.42.617.648 1.12.648Zm-2.453-1.588v-.227c0-.546.227-.791.573-.791.297 0 .572.192.572.708v.367c0 .573-.253.744-.564.744-.354 0-.581-.215-.581-.8Z" />
-                                </svg>
-                              </div>
-                              <div>
-                                <h4 class="mb-3 text-light">E-Mail</h4>
-                                <p class="mb-0">
-                                  <a class="link-light link-opacity-75 link-opacity-100-hover text-decoration-none" href="mailto:demo@yourdomain.com">demo@yourdomain.com</a>
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="d-flex">
-                          <div class="me-4 text-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-alarm" viewBox="0 0 16 16">
-                              <path d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9V5.5z" />
-                              <path d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1h-3zm1.038 3.018a6.093 6.093 0 0 1 .924 0 6 6 0 1 1-.924 0zM0 3.5c0 .753.333 1.429.86 1.887A8.035 8.035 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5zM13.5 1c-.753 0-1.429.333-1.887.86a8.035 8.035 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <h4 class="mb-3 text-light">Opening Hours</h4>
-                            <div class="d-flex mb-1">
-                              <p class="text-light fw-bold mb-0 me-5">Mon - Fri</p>
-                              <p class="text-light opacity-75 mb-0">9am - 5pm</p>
-                            </div>
-                            <div class="d-flex">
-                              <p class="text-light fw-bold mb-0 me-5">Sat - Sun</p>
-                              <p class="text-light opacity-75 mb-0">9am - 2pm</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-12 col-lg-6">
-                  <div class="row align-items-lg-center h-100">
-                    <div class="col-12">
-                      <form action="#!">
-                        <div class="row gy-4 gy-xl-5 p-4 p-xl-5">
-                          <div class="col-12">
-                            <label for="fullname" class="form-label">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="fullname" name="fullname" value="" required>
-                          </div>
-                          <div class="col-12 col-md-6">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                              <span class="input-group-text">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
-                                  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
-                                </svg>
-                              </span>
-                              <input type="email" class="form-control" id="email" name="email" value="" required>
-                            </div>
-                          </div>
-                          <div class="col-12 col-md-6">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <div class="input-group">
-                              <span class="input-group-text">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
-                                  <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z" />
-                                </svg>
-                              </span>
-                              <input type="tel" class="form-control" id="phone" name="phone" value="">
-                            </div>
-                          </div>
-                          <div class="col-12">
-                            <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="subject" name="subject" value="" required>
-                          </div>
-                          <div class="col-12">
-                            <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
-                          </div>
-                          <div class="col-12">
-                            <div class="d-grid">
-                              <button class="btn btn-primary btn-lg" type="submit">Send Message</button>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
+  </header>
+
+  <!-- Contenedor Principal de Autenticación -->
+  <main class="main-auth-container">
+    <div class="auth-card-wrapper">
+      <div class="cyber-card-glow-bar"></div>
+
+      <!-- Encabezado de la Marca y Logo Futurista -->
+      <div class="auth-brand-header">
+        <div class="logo-hologram-frame">
+          <div class="orbit-ring ring-1"></div>
+          <div class="orbit-ring ring-2"></div>
+          <img src="img/vision_mind_logo.png" alt="Logo Vision Mind" width="96" height="96">
+        </div>
+
+        <h1 class="brand-title">VISION MIND</h1>
+        <p class="brand-tagline">Descubre tu pasión • <span class="highlight-tag">Construye tu futuro</span></p>
+      </div>
+
+      <!-- Pestañas de Cambio de Modo (Iniciar Sesión / Crear Cuenta) -->
+      <nav class="auth-mode-tabs" aria-label="Selector de autenticación">
+        <button type="button" class="tab-btn active" data-mode="login">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+          </svg>
+          INICIAR SESIÓN
+        </button>
+        <button type="button" class="tab-btn" data-mode="register">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+          </svg>
+          CREAR CUENTA
+        </button>
+      </nav>
+
+      <!-- ===================================================================
+           PANEL 1: INICIAR SESIÓN
+           =================================================================== -->
+      <section id="panel-login" class="form-panel active">
+        <!-- Selector de Ingreso: Correo vs Teléfono -->
+        <div class="login-method-selector">
+          <button type="button" class="method-btn active" data-method="email">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            Correo Electrónico
+          </button>
+          <button type="button" class="method-btn" data-method="phone">
+            <svg viewBox="0 0 24 24">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            Número de Teléfono
+          </button>
+        </div>
+
+        <form id="form-login" novalidate>
+          <!-- Campo Correo Electrónico -->
+          <div class="cyber-input-group" id="login-email-group">
+            <label class="input-label" for="login-email">
+              <span>Correo Electrónico</span>
+              <span class="label-tag">REQUERIDO</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                id="login-email" 
+                class="cyber-input" 
+                placeholder="usuario@visionmind.com" 
+                autocomplete="email"
+                required>
+            </div>
+          </div>
+
+          <!-- Campo Teléfono Móvil (Alternativo) -->
+          <div class="cyber-input-group" id="login-phone-group" style="display: none;">
+            <label class="input-label" for="login-phone">
+              <span>Número Telefónico</span>
+              <span class="label-tag">MÓVIL</span>
+            </label>
+            <div class="phone-input-row">
+              <select id="login-country-code" class="country-code-select" aria-label="Código de País">
+                <option value="+57">🇨🇴 +57</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+52">🇲🇽 +52</option>
+                <option value="+54">🇦🇷 +54</option>
+                <option value="+56">🇨🇱 +56</option>
+                <option value="+51">🇵🇪 +51</option>
+              </select>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                  </svg>
+                </span>
+                <input 
+                  type="tel" 
+                  id="login-phone" 
+                  class="cyber-input" 
+                  placeholder="300 123 4567" 
+                  autocomplete="tel">
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
+          <!-- Campo Contraseña -->
+          <div class="cyber-input-group">
+            <label class="input-label" for="login-password">
+              <span>Clave de Acceso</span>
+              <span class="label-tag">ENCRIPTADA</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="login-password" 
+                class="cyber-input" 
+                placeholder="••••••••••••" 
+                autocomplete="current-password"
+                required>
+              <button type="button" class="toggle-password-btn" data-target="login-password" title="Ver contraseña" aria-label="Mostrar contraseña">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12c-2.48 0-4.5-2.02-4.5-4.5S9.52 7.5 12 7.5s4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5zm0-7a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Opciones extras -->
+          <div class="form-extra-options">
+            <label class="cyber-checkbox-label">
+              <input type="checkbox" id="remember-me" checked>
+              <span>Recordar terminal</span>
+            </label>
+            <a href="#" class="forgot-password-link" onclick="event.preventDefault(); showToast('Enlace de recuperación enviado al contacto registrado', 'info');">¿Olvidaste tu clave?</a>
+          </div>
+
+          <!-- Botón de Entrada Principal -->
+          <button type="submit" class="btn-cyber-submit">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/>
+            </svg>
+            INGRESAR AL SISTEMA
+          </button>
+        </form>
+
+        <div class="cyber-divider">
+          <span>O REGÍSTRATE</span>
+        </div>
+
+        <p class="auth-footer-note">
+          ¿Aún no tienes cuenta? <a href="#" data-switch-to="register">Crea tu cuenta de Vision Mind</a>
+        </p>
+      </section>
+
+      <!-- ===================================================================
+           PANEL 2: CREAR CUENTA
+           =================================================================== -->
+      <section id="panel-register" class="form-panel">
+        <form id="form-register" novalidate>
+          <!-- Nombre Completo -->
+          <div class="cyber-input-group">
+            <label class="input-label" for="reg-fullname">
+              <span>Nombre Completo</span>
+              <span class="label-tag">IDENTIDAD</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="reg-fullname" 
+                class="cyber-input" 
+                placeholder="Ej. Alexander Phoenix" 
+                autocomplete="name"
+                required>
+            </div>
+          </div>
+
+          <!-- Correo Electrónico -->
+          <div class="cyber-input-group">
+            <label class="input-label" for="reg-email">
+              <span>Correo Electrónico</span>
+              <span class="label-tag">VERIFICACIÓN</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                id="reg-email" 
+                class="cyber-input" 
+                placeholder="alexander@correo.com" 
+                autocomplete="email"
+                required>
+            </div>
+          </div>
+
+          <!-- Número Telefónico -->
+          <div class="cyber-input-group">
+            <label class="input-label" for="reg-phone">
+              <span>Número de Teléfono</span>
+              <span class="label-tag">MÓVIL</span>
+            </label>
+            <div class="phone-input-row">
+              <select id="reg-country-code" class="country-code-select" aria-label="Código de País">
+                <option value="+57">🇨🇴 +57</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+52">🇲🇽 +52</option>
+                <option value="+54">🇦🇷 +54</option>
+                <option value="+56">🇨🇱 +56</option>
+                <option value="+51">🇵🇪 +51</option>
+              </select>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                  </svg>
+                </span>
+                <input 
+                  type="tel" 
+                  id="reg-phone" 
+                  class="cyber-input" 
+                  placeholder="300 000 0000" 
+                  autocomplete="tel"
+                  required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contraseña -->
+          <div class="cyber-input-group">
+            <label class="input-label" for="reg-password">
+              <span>Crear Contraseña</span>
+              <span class="label-tag">SEGURIDAD</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="reg-password" 
+                class="cyber-input" 
+                placeholder="Mínimo 8 caracteres" 
+                autocomplete="new-password"
+                required>
+              <button type="button" class="toggle-password-btn" data-target="reg-password" title="Ver contraseña" aria-label="Mostrar contraseña">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12c-2.48 0-4.5-2.02-4.5-4.5S9.52 7.5 12 7.5s4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5zm0-7a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Medidor de fortaleza -->
+            <div class="password-strength-bar">
+              <div id="strength-fill" class="strength-fill"></div>
+            </div>
+            <span id="strength-text" class="strength-text">Introduce tu contraseña</span>
+          </div>
+
+          <!-- Confirmar Contraseña -->
+          <div class="cyber-input-group">
+            <label class="input-label" for="reg-confirm-password">
+              <span>Confirmar Contraseña</span>
+              <span class="label-tag">VALIDACIÓN</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="reg-confirm-password" 
+                class="cyber-input" 
+                placeholder="Repite tu contraseña" 
+                autocomplete="new-password"
+                required>
+              <button type="button" class="toggle-password-btn" data-target="reg-confirm-password" title="Ver contraseña" aria-label="Mostrar contraseña">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12c-2.48 0-4.5-2.02-4.5-4.5S9.52 7.5 12 7.5s4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5zm0-7a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Términos y Condiciones -->
+          <div class="form-extra-options">
+            <label class="cyber-checkbox-label">
+              <input type="checkbox" id="reg-terms" required>
+              <span>Acepto los términos del sistema y privacidad</span>
+            </label>
+          </div>
+
+          <!-- Botón de Registro Principal -->
+          <button type="submit" class="btn-cyber-submit btn-register-accent">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            CREAR CUENTA NUEVA
+          </button>
+        </form>
+
+        <div class="cyber-divider">
+          <span>O ACCEDE</span>
+        </div>
+
+        <p class="auth-footer-note">
+          ¿Ya tienes cuenta activa? <a href="#" data-switch-to="login">Inicia sesión en tu terminal</a>
+        </p>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="login.js"></script>
 </body>
 </html>
