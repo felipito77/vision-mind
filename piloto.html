@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Piloto Comercial | Cabina de Vuelo 3D - Vision Mind</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #020617;
+      color: #f8fafc;
+      user-select: none;
+    }
+
+    a-scene {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* HUD Futurista de Aviación */
+    .hud-panel {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 999;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 12px;
+      padding: 14px 18px;
+      max-width: 340px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.2);
+      pointer-events: auto;
+    }
+
+    .hud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 8px #22c55e; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    .hud-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-desc {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .flight-status {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 10px;
+      background: rgba(2, 6, 23, 0.75);
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .f-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .f-lbl {
+      font-size: 0.65rem;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .f-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .val-cyan { color: #38bdf8; }
+    .val-green { color: #22c55e; }
+    .val-yellow { color: #facc15; }
+
+    .hud-controls {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 6px 10px;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border: 1px solid #38bdf8;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+      background: linear-gradient(135deg, #0369a1, #0284c7);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .instructions-tag {
+      font-size: 0.7rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.85;
+    }
+
+    #notif-box {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #38bdf8;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: #38bdf8;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1000;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HUD Flotante Piloto -->
+  <div class="hud-panel">
+    <div class="hud-badge">
+      <span class="pulse-dot"></span> VUELO VM-2026 &bull; CRUCERO FL330
+    </div>
+    <div class="hud-title">
+      <span>✈️</span> Carrera de Piloto Comercial
+    </div>
+    <p class="hud-desc">
+      Aeronave: <strong>Jet Bimotor Comercial</strong>.<br>
+      Ruta: Nivel de vuelo 33,000 pies. Piloto automático y radar activos.
+    </p>
+
+    <div class="flight-status">
+      <div class="f-item">
+        <span class="f-lbl">Altitud</span>
+        <span class="f-val val-cyan" id="f-alt">33,000 FT</span>
+      </div>
+      <div class="f-item">
+        <span class="f-lbl">Velocidad</span>
+        <span class="f-val val-green" id="f-spd">290 KTS</span>
+      </div>
+      <div class="f-item">
+        <span class="f-lbl">Rumbo (HDG)</span>
+        <span class="f-val val-yellow">270° OESTE</span>
+      </div>
+      <div class="f-item">
+        <span class="f-lbl">Piloto Auto.</span>
+        <span class="f-val val-green">A/P ENGAGED</span>
+      </div>
+    </div>
+
+    <div class="hud-controls">
+      <button class="btn-action" onclick="toggleThrottles()">
+        <span>⚡</span> Acelerar Gases
+      </button>
+      <button class="btn-action" onclick="playCabinChime()">
+        <span>🔔</span> Aviso Cabina
+      </button>
+    </div>
+
+    <div class="instructions-tag">
+      <span>🎮</span> <strong>WASD / Flechas:</strong> Moverte | <strong>Mouse:</strong> Mirar alrededor | Clic en radar, mandos y ventanas
+    </div>
+  </div>
+
+  <div id="notif-box">Sistema de aviónica seleccionado</div>
+
+  <!-- ESCENA VR A-FRAME -->
+  <a-scene embedded vr-mode-ui="enabled: true">
+
+    <!-- CIELO EXTERIOR Y ATMÓSFERA A 33,000 PIES -->
+    <a-sky color="#0284c7"></a-sky>
+
+    <!-- NUBES VOLUMÉTRICAS EN MOVIMIENTO POR DEBAJO DEL AVIÓN -->
+    <a-entity id="clouds-layer" position="0 -12 -20">
+      <a-sphere position="-15 0 -10" radius="10" color="#ffffff" opacity="0.85"></a-sphere>
+      <a-sphere position="0 2 -15" radius="12" color="#ffffff" opacity="0.9"></a-sphere>
+      <a-sphere position="16 0 -12" radius="11" color="#ffffff" opacity="0.85"></a-sphere>
+      <a-sphere position="-8 -2 -25" radius="14" color="#f8fafc" opacity="0.8"></a-sphere>
+      <a-sphere position="12 -2 -28" radius="13" color="#f8fafc" opacity="0.8"></a-sphere>
+    </a-entity>
+
+    <!-- CÁMARA (VISTA PANORÁMICA DE CABINA) -->
+    <a-entity position="0 1.35 0.9">
+      <a-camera look-controls="pointerLockEnabled: false" wasd-controls="acceleration: 15">
+        <a-cursor
+          id="cursor"
+          color="#38bdf8"
+          fuse="false"
+          raycaster="objects: .interactivo">
+        </a-cursor>
+      </a-camera>
+    </a-entity>
+
+    <!-- ILUMINACIÓN DE CABINA (AVIÓNICA Y LUZ SOLAR) -->
+    <a-light type="ambient" color="#94a3b8" intensity="0.5"></a-light>
+    
+    <!-- Luz solar del exterior entrando por el parabrisas -->
+    <a-light type="directional" position="2 4 -5" color="#ffffff" intensity="1.8"></a-light>
+    <!-- Iluminación verde/azul de instrumentación en cabina -->
+    <a-light type="point" position="0 1.2 -0.8" color="#38bdf8" intensity="0.7"></a-light>
+    <a-light type="point" position="0 2.2 -0.5" color="#f97316" intensity="0.3"></a-light>
+
+    <!-- ========================================== -->
+    <!-- FUSELAJE DE CABINA Y PARABRISAS (COCKPIT) -->
+    <!-- ========================================== -->
+
+    <!-- Suelo antideslizante de cabina -->
+    <a-plane
+      rotation="-90 0 0"
+      position="0 0 0"
+      width="4.5"
+      height="5"
+      color="#1e293b"
+      roughness="0.7">
+    </a-plane>
+
+    <!-- Mampara trasera de la cabina -->
+    <a-box position="0 1.6 2.8" width="4.5" height="3.2" depth="0.2" color="#334155"></a-box>
+    <!-- Puerta blindada de acceso al cockpit -->
+    <a-box position="0 1.3 2.7" width="1.0" height="2.2" depth="0.05" color="#1e293b"></a-box>
+    <a-text value="FLIGHT DECK" position="-0.35 2.1 2.65" scale="0.3 0.3 0.3" color="#ffffff"></a-text>
+
+    <!-- Mamparas laterales del cockpit -->
+    <a-box position="-2.2 1.6 0.5" width="0.2" height="3.2" depth="4.6" color="#334155"></a-box>
+    <a-box position="2.2 1.6 0.5" width="0.2" height="3.2" depth="4.6" color="#334155"></a-box>
+
+    <!-- MARCO DEL PARABRISAS FRONTAL DEL AVIÓN -->
+    <!-- Pilar central del parabrisas (Center post) -->
+    <a-box position="0 1.85 -1.7" width="0.14" height="1.4" depth="0.1" color="#1e293b"></a-box>
+    <!-- Marco superior del parabrisas (Glareshield visor) -->
+    <a-box position="0 2.4 -1.5" width="3.4" height="0.2" depth="0.4" color="#0f172a"></a-box>
+    <!-- Pilares diagonales laterales del parabrisas -->
+    <a-box position="-1.6 1.85 -1.4" width="0.14" height="1.3" depth="0.1" rotation="0 25 -15" color="#1e293b"></a-box>
+    <a-box position="1.6 1.85 -1.4" width="0.14" height="1.3" depth="0.1" rotation="0 -25 15" color="#1e293b"></a-box>
+
+    <!-- Cristal del parabrisas (Translúcido antirreflectante) -->
+    <a-plane position="-0.75 1.8 -1.65" width="1.35" height="0.95" color="#38bdf8" opacity="0.15" class="interactivo" onclick="mostrarNotif('Parabrisas del cockpit: Volando a Mach 0.78 sobre la capa nubosa.')"></a-plane>
+    <a-plane position="0.75 1.8 -1.65" width="1.35" height="0.95" color="#38bdf8" opacity="0.15" class="interactivo" onclick="mostrarNotif('Parabrisas del cockpit: Vista frontal despejada. Horizonte de vuelo a la vista.')"></a-plane>
+
+    <!-- ========================================== -->
+    <!-- PANEL PRINCIPAL DE INSTRUMENTOS (GLASS COCKPIT) -->
+    <!-- ========================================== -->
+    <a-entity id="main-panel" position="0 1.05 -1.0" rotation="-15 0 0">
+      
+      <!-- Estructura del panel frontal negro mate -->
+      <a-box position="0 0.15 0" width="3.6" height="0.8" depth="0.3" color="#0f172a" roughness="0.9"></a-box>
+      <!-- Visera antirreflejo (Glareshield) superior compacta -->
+      <a-box position="0 0.58 0.12" width="3.6" height="0.06" depth="0.25" color="#020617"></a-box>
+
+      <!-- PANTALLA PFD (CAPITÁN - FRENTE AL ASIENTO): HORIZONTE ARTIFICIAL Y ALTITUD -->
+      <a-entity position="-0.75 0.22 0.18" class="interactivo" onclick="mostrarNotif('PFD (Primary Flight Display): Nivelado en crucero a 33,000 pies y 290 nudos.')">
+        <a-box width="0.55" height="0.5" depth="0.04" color="#020617"></a-box>
+        <!-- Horizonte Artificial (Mitad azul cielo, mitad marrón tierra) -->
+        <a-plane position="0 0.05 0.03" width="0.32" height="0.16" color="#0284c7"></a-plane>
+        <a-plane position="0 -0.11 0.03" width="0.32" height="0.16" color="#78350f"></a-plane>
+        <!-- Símbolo del avión en amarillo -->
+        <a-cylinder position="0 -0.03 0.04" radius="0.015" height="0.1" rotation="0 0 90" color="#facc15"></a-cylinder>
+        <a-sphere position="0 -0.03 0.04" radius="0.015" color="#facc15"></a-sphere>
+
+        <!-- Cinta de velocidad (izquierda) y cinta de altitud (derecha) -->
+        <a-box position="-0.21 0 0.03" width="0.08" height="0.4" depth="0.01" color="#1e293b"></a-box>
+        <a-text value="290\nKTS" position="-0.24 0 0.04" scale="0.15 0.15 0.15" color="#22c55e"></a-text>
+
+        <a-box position="0.21 0 0.03" width="0.08" height="0.4" depth="0.01" color="#1e293b"></a-box>
+        <a-text value="FL\n330" position="0.18 0 0.04" scale="0.15 0.15 0.15" color="#38bdf8"></a-text>
+
+        <a-text value="PFD CAPTAIN" position="-0.22 0.22 0.03" scale="0.18 0.18 0.18" color="#94a3b8"></a-text>
+      </a-entity>
+
+      <!-- PANTALLA ND (RADAR DE NAVEGACIÓN - CENTRO IZQUIERDA) -->
+      <a-entity position="-0.15 0.22 0.18" class="interactivo" onclick="mostrarNotif('ND (Navigation Display): Radar meteorológico y plan de vuelo activo a waypoint BOG-27.')">
+        <a-box width="0.55" height="0.5" depth="0.04" color="#020617"></a-box>
+        <!-- Rosa de los vientos / Compás -->
+        <a-ring position="0 0 0.03" radius-inner="0.16" radius-outer="0.18" color="#22c55e"></a-ring>
+        <!-- Arco de radar meteorológico -->
+        <a-ring position="0 0 0.03" radius-inner="0.1" radius-outer="0.12" color="#0284c7" theta-length="120"></a-ring>
+        <a-sphere position="0.05 0.06 0.03" radius="0.015" color="#ef4444"></a-sphere>
+        <a-text value="HDG: 270\nDIST: 42 NM" position="-0.22 0.18 0.03" scale="0.16 0.16 0.16" color="#22c55e"></a-text>
+        <a-text value="RADAR WX" position="-0.2 0.22 0.03" scale="0.18 0.18 0.18" color="#38bdf8"></a-text>
+      </a-entity>
+
+      <!-- PANTALLA EICAS / ECAM (MONITOR DE MOTORES - CENTRO DERECHA) -->
+      <a-entity position="0.45 0.22 0.18" class="interactivo" onclick="mostrarNotif('EICAS (Engine Display): Turbinas 1 y 2 en régimen crucero óptimo. N1: 88.4%.')">
+        <a-box width="0.55" height="0.5" depth="0.04" color="#020617"></a-box>
+        <!-- Diales de potencia de turbinas -->
+        <a-ring position="-0.12 0.08 0.03" radius-inner="0.06" radius-outer="0.08" color="#22c55e"></a-ring>
+        <a-ring position="0.12 0.08 0.03" radius-inner="0.06" radius-outer="0.08" color="#22c55e"></a-ring>
+        <a-text value="ENG 1: N1 88.4%\nENG 2: N1 88.4%\nEGT: 610 C\nFUEL: 14.2 T" position="-0.24 -0.05 0.03" scale="0.15 0.15 0.15" color="#f8fafc"></a-text>
+        <a-text value="ENGINE EICAS" position="-0.22 0.22 0.03" scale="0.18 0.18 0.18" color="#f59e0b"></a-text>
+      </a-entity>
+
+      <!-- PANTALLA PFD PRIMER OFICIAL (DERECHA) -->
+      <a-entity position="1.05 0.22 0.18">
+        <a-box width="0.55" height="0.5" depth="0.04" color="#020617"></a-box>
+        <a-plane position="0 0.05 0.03" width="0.32" height="0.16" color="#0284c7"></a-plane>
+        <a-plane position="0 -0.11 0.03" width="0.32" height="0.16" color="#78350f"></a-plane>
+        <a-text value="PFD F/O" position="-0.16 0.22 0.03" scale="0.18 0.18 0.18" color="#94a3b8"></a-text>
+      </a-entity>
+
+      <!-- PANEL DE PILOTO AUTOMÁTICO (MCP - EN LA VISERA SUPERIOR) -->
+      <a-entity position="0 0.58 0.25" class="interactivo" onclick="mostrarNotif('Panel MCP de Piloto Automático: Modos LNAV/VNAV y Acelerador Automático armados.')">
+        <a-box width="2.2" height="0.12" depth="0.06" color="#1e293b"></a-box>
+        <a-text value="SPD: 290 | HDG: 270 | ALT: 33000 | V/S: 0" position="-0.95 0 0.04" scale="0.18 0.18 0.18" color="#22c55e"></a-text>
+        <a-box position="0.8 0 0.04" width="0.22" height="0.07" depth="0.02" color="#22c55e"></a-box>
+        <a-text value="A/P CMD" position="0.72 0 0.06" scale="0.13 0.13 0.13" color="#020617"></a-text>
+      </a-entity>
+
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- MANDOS DE VUELO (YOKES) DEL PILOTO -->
+    <!-- ========================================== -->
+
+    <!-- YOKE CAPITÁN (IZQUIERDA) -->
+    <a-entity position="-0.8 0.5 -0.4">
+      <!-- Columna de control que sube del suelo -->
+      <a-cylinder position="0 0.25 0" radius="0.035" height="0.55" rotation="20 0 0" color="#475569" metalness="0.8"></a-cylinder>
+      <!-- Cabria de mando ergonómica (W-Shape) -->
+      <a-cylinder position="0 0.52 0.1" radius="0.025" height="0.45" rotation="0 0 90" color="#0f172a"></a-cylinder>
+      <!-- Empuñadura izquierda y derecha -->
+      <a-cylinder position="-0.22 0.56 0.1" radius="0.02" height="0.16" rotation="0 0 0" color="#1e293b"></a-cylinder>
+      <a-cylinder position="0.22 0.56 0.1" radius="0.02" height="0.16" rotation="0 0 0" color="#1e293b"></a-cylinder>
+      <a-sphere position="-0.22 0.64 0.1" radius="0.015" color="#ef4444"></a-sphere> <!-- Botón PTT Radio -->
+
+      <a-text value="YOKE MANDO" position="-0.2 0.72 0.1" scale="0.22 0.22 0.22" color="#38bdf8"></a-text>
+    </a-entity>
+
+    <!-- YOKE PRIMER OFICIAL (DERECHA) -->
+    <a-entity position="0.8 0.5 -0.4">
+      <a-cylinder position="0 0.25 0" radius="0.035" height="0.55" rotation="20 0 0" color="#475569" metalness="0.8"></a-cylinder>
+      <a-cylinder position="0 0.52 0.1" radius="0.025" height="0.45" rotation="0 0 90" color="#0f172a"></a-cylinder>
+      <a-cylinder position="-0.22 0.56 0.1" radius="0.02" height="0.16" rotation="0 0 0" color="#1e293b"></a-cylinder>
+      <a-cylinder position="0.22 0.56 0.1" radius="0.02" height="0.16" rotation="0 0 0" color="#1e293b"></a-cylinder>
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- PEDESTAL CENTRAL DE ACELERADORES (THROTTLE QUADRANT) -->
+    <!-- ========================================== -->
+    <a-entity id="pedestal" position="0 0.45 -0.3">
+      <!-- Bloque consola central -->
+      <a-box position="0 0 0" width="0.75" height="0.7" depth="1.1" color="#1e293b" roughness="0.8"></a-box>
+      <a-box position="0 0.36 0" width="0.7" height="0.04" depth="1.0" color="#0f172a"></a-box>
+
+      <!-- PALANCAS DE ACELERACIÓN DE MOTORES (THROTTLE LEVERS) -->
+      <a-entity id="throttle-levers" position="0 0.38 -0.05" class="interactivo" onclick="toggleThrottles()">
+        <!-- Ranura metálica -->
+        <a-box position="0 0 0" width="0.28" height="0.02" depth="0.4" color="#334155"></a-box>
+        <!-- Palanca Motor 1 -->
+        <a-cylinder position="-0.06 0.12 0.05" radius="0.015" height="0.24" rotation="20 0 0" color="#cbd5e1" metalness="0.9"></a-cylinder>
+        <a-cylinder position="-0.06 0.22 0.08" radius="0.035" height="0.07" rotation="0 0 90" color="#ffffff"></a-cylinder>
+        <!-- Palanca Motor 2 -->
+        <a-cylinder position="0.06 0.12 0.05" radius="0.015" height="0.24" rotation="20 0 0" color="#cbd5e1" metalness="0.9"></a-cylinder>
+        <a-cylinder position="0.06 0.22 0.08" radius="0.035" height="0.07" rotation="0 0 90" color="#ffffff"></a-cylinder>
+
+        <!-- Palanca de Flaps (derecha) -->
+        <a-cylinder position="0.18 0.08 -0.08" radius="0.01" height="0.16" rotation="35 0 0" color="#cbd5e1"></a-cylinder>
+        <a-box position="0.18 0.15 -0.12" width="0.04" height="0.03" depth="0.06" color="#22c55e"></a-box>
+
+        <!-- Palanca de Speedbrake / Spoilers (izquierda) -->
+        <a-cylinder position="-0.18 0.08 -0.08" radius="0.01" height="0.16" rotation="10 0 0" color="#cbd5e1"></a-cylinder>
+        <a-box position="-0.18 0.15 -0.09" width="0.04" height="0.04" depth="0.04" color="#38bdf8"></a-box>
+
+        <!-- Ruedas de compensador (Trim Wheel) en los laterales -->
+        <a-cylinder position="-0.36 0 0" radius="0.15" height="0.03" rotation="0 0 90" color="#475569"></a-cylinder>
+        <a-cylinder position="0.36 0 0" radius="0.15" height="0.03" rotation="0 0 90" color="#475569"></a-cylinder>
+      </a-entity>
+
+      <a-text value="THROTTLE QUADRANT" position="-0.28 0.42 0.4" scale="0.2 0.2 0.2" color="#94a3b8"></a-text>
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- PANEL SUPERIOR EN EL TECHO (OVERHEAD PANEL) -->
+    <!-- ========================================== -->
+    <a-entity position="0 2.4 -0.6" rotation="30 0 0" class="interactivo" onclick="mostrarNotif('Overhead Panel: Sistemas eléctricos, generadores APU y presurización en estado NORMAL.')">
+      <a-box width="1.6" height="1.1" depth="0.1" color="#1e293b"></a-box>
+      <!-- Matriz de botones e interruptores iluminados -->
+      <a-sphere position="-0.5 0.3 0.06" radius="0.02" color="#22c55e"></a-sphere>
+      <a-sphere position="-0.3 0.3 0.06" radius="0.02" color="#22c55e"></a-sphere>
+      <a-sphere position="-0.1 0.3 0.06" radius="0.02" color="#38bdf8"></a-sphere>
+      <a-sphere position="0.1 0.3 0.06" radius="0.02" color="#f59e0b"></a-sphere>
+      <a-sphere position="0.3 0.3 0.06" radius="0.02" color="#22c55e"></a-sphere>
+      <a-sphere position="0.5 0.3 0.06" radius="0.02" color="#22c55e"></a-sphere>
+
+      <a-sphere position="-0.4 0 0.06" radius="0.02" color="#38bdf8"></a-sphere>
+      <a-sphere position="0.0 0 0.06" radius="0.02" color="#22c55e"></a-sphere>
+      <a-sphere position="0.4 0 0.06" radius="0.02" color="#38bdf8"></a-sphere>
+
+      <a-text value="OVERHEAD APU &amp; ELEC" position="-0.5 -0.35 0.06" scale="0.22 0.22 0.22" color="#cbd5e1"></a-text>
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- ASIENTOS DE PILOTO (CAPITÁN Y PRIMER OFICIAL) -->
+    <!-- ========================================== -->
+    <!-- Asiento Capitán (Izquierda) -->
+    <a-entity position="-0.8 0 0.6">
+      <a-box position="0 0.2 0" width="0.65" height="0.4" depth="0.65" color="#334155"></a-box>
+      <a-box position="0 0.42 0" width="0.6" height="0.08" depth="0.6" color="#e2e8f0" roughness="0.9"></a-box> <!-- Piel de cordero -->
+      <a-box position="0 0.95 0.28" width="0.6" height="1.0" depth="0.1" color="#e2e8f0" roughness="0.9"></a-box>
+      <a-box position="0 1.5 0.28" width="0.35" height="0.2" depth="0.1" color="#1e293b"></a-box> <!-- Reposacabezas -->
+    </a-entity>
+
+    <!-- Asiento Primer Oficial (Derecha) -->
+    <a-entity position="0.8 0 0.6">
+      <a-box position="0 0.2 0" width="0.65" height="0.4" depth="0.65" color="#334155"></a-box>
+      <a-box position="0 0.42 0" width="0.6" height="0.08" depth="0.6" color="#e2e8f0" roughness="0.9"></a-box>
+      <a-box position="0 0.95 0.28" width="0.6" height="1.0" depth="0.1" color="#e2e8f0" roughness="0.9"></a-box>
+      <a-box position="0 1.5 0.28" width="0.35" height="0.2" depth="0.1" color="#1e293b"></a-box>
+    </a-entity>
+
+  </a-scene>
+
+  <script>
+    let audioCtx = null;
+    let maxThrust = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    // Sonido chime aeronáutico de aviso ("Ding-Dong" de cabina)
+    function playCabinChime() {
+      initAudio();
+      mostrarNotif('¡CHIME DE CABINA! Señal de cinturones y comunicación a tripulación.');
+      if (!audioCtx) return;
+      try {
+        const t = audioCtx.currentTime;
+        // Tono 1: 587 Hz (Re5)
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(587.33, t);
+        gain1.gain.setValueAtTime(0.18, t);
+        gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(t);
+        osc1.stop(t + 0.6);
+
+        // Tono 2: 440 Hz (La4)
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(440, t + 0.35);
+        gain2.gain.setValueAtTime(0.18, t + 0.35);
+        gain2.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(t + 0.35);
+        osc2.stop(t + 1.2);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    // Acelerar gases / regular empuje
+    function toggleThrottles() {
+      maxThrust = !maxThrust;
+      const spdEl = document.getElementById('f-spd');
+      const altEl = document.getElementById('f-alt');
+      const levers = document.getElementById('throttle-levers');
+
+      if (maxThrust) {
+        if (spdEl) spdEl.innerText = '320 KTS (M 0.82)';
+        if (altEl) altEl.innerText = '35,000 FT (Ascenso)';
+        if (levers) levers.setAttribute('rotation', '-15 0 0');
+        mostrarNotif('Aceleración a N1: 94%. Aumentando velocidad de crucero.');
+      } else {
+        if (spdEl) spdEl.innerText = '290 KTS (M 0.78)';
+        if (altEl) altEl.innerText = '33,000 FT (Crucero)';
+        if (levers) levers.setAttribute('rotation', '0 0 0');
+        mostrarNotif('Empuje ajustado a régimen de crucero estándar (N1: 88%).');
+      }
+    }
+
+    function mostrarNotif(texto) {
+      const box = document.getElementById('notif-box');
+      box.innerText = texto;
+      box.style.opacity = '1';
+      clearTimeout(window.notifTimeout);
+      window.notifTimeout = setTimeout(() => {
+        box.style.opacity = '0';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

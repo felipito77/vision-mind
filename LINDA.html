@@ -1,106 +1,559 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LINDA</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Gastronomía | Cocina Profesional 3D - Vision Mind</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #0d1117;
+      color: #f1f5f9;
+      user-select: none;
+    }
+
+    a-scene {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* HUD Futurista de Cocina */
+    .hud-panel {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 999;
+      background: rgba(17, 24, 39, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      border-radius: 12px;
+      padding: 14px 18px;
+      max-width: 340px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(249, 115, 22, 0.2);
+      pointer-events: auto;
+    }
+
+    .hud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.5);
+      color: #fb923c;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #f97316;
+      border-radius: 50%;
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 8px #f97316; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    .hud-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-desc {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .kitchen-status {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 10px;
+      background: rgba(30, 41, 59, 0.7);
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .k-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .k-lbl {
+      font-size: 0.65rem;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .k-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .val-orange { color: #fb923c; }
+    .val-green { color: #22c55e; }
+    .val-yellow { color: #facc15; }
+
+    .hud-controls {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 6px 10px;
+      background: linear-gradient(135deg, #ea580c, #c2410c);
+      border: 1px solid #fb923c;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+      background: linear-gradient(135deg, #c2410c, #ea580c);
+      box-shadow: 0 0 10px rgba(251, 146, 60, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .instructions-tag {
+      font-size: 0.7rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.85;
+    }
+
+    #notif-box {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #fb923c;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: #fb923c;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1000;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <div class="panel">
-        <h2>Tienda Virtual 3D</h2>
-        
-        <p>
-        Con el mouse puedes girar la camara y con wasd o las flechas puedes moverte.
-        </p>
-        
-        <p>
-        Mira el círculo del centro de la pantalla y apunta a los productos.
-        </p>
-        
-        <p>
-        Productos seleccionados:
-        <span id="contador">0</span>
-        </p>
-        
-        </div>
-        <a-scene>
 
-            <!-- CAMARA CON CURSOR -->
-            <a-entity position="0 1.6 10">
+  <!-- HUD Flotante Gastronomía -->
+  <div class="hud-panel">
+    <div class="hud-badge">
+      <span class="pulse-dot"></span> PARTIDA DE CALIENTES &bull; SERVICIO ACTIVO
+    </div>
+    <div class="hud-title">
+      <span>🍳</span> Gastronomía &amp; Alta Cocina
+    </div>
+    <p class="hud-desc">
+      Estación: <strong>Cocina Gourmet &amp; Emplatado</strong>.<br>
+      Preparación: Solomillo sellado en salsa de oporto y verduras glaseadas.
+    </p>
+
+    <div class="kitchen-status">
+      <div class="k-item">
+        <span class="k-lbl">Temperatura Fogón</span>
+        <span class="k-val val-orange" id="k-temp">215 °C</span>
+      </div>
+      <div class="k-item">
+        <span class="k-lbl">Comanda Mesa 4</span>
+        <span class="k-val val-green">En emplatado</span>
+      </div>
+      <div class="k-item">
+        <span class="k-lbl">Punto de Carne</span>
+        <span class="k-val val-yellow">Término Medio</span>
+      </div>
+      <div class="k-item">
+        <span class="k-lbl">Horno Convección</span>
+        <span class="k-val val-orange">180 °C Listo</span>
+      </div>
+    </div>
+
+    <div class="hud-controls">
+      <button class="btn-action" onclick="toggleStoveFlames()">
+        <span id="flame-icon">🔥</span> Regular Fuego
+      </button>
+      <button class="btn-action" onclick="ringServiceBell()">
+        <span>🔔</span> Timbre Pase
+      </button>
+    </div>
+
+    <div class="instructions-tag">
+      <span>🎮</span> <strong>WASD / Flechas:</strong> Caminar | <strong>Mouse:</strong> Mirar | Clic en platos, hornos y sartenes
+    </div>
+  </div>
+
+  <div id="notif-box">Ingrediente seleccionado</div>
+
+  <!-- ESCENA VR A-FRAME -->
+  <a-scene embedded vr-mode-ui="enabled: true">
+
+    <!-- CÁMARA CON CURSOR INTERACTIVO -->
+    <a-entity position="0 1.6 3.8">
+      <a-camera look-controls="pointerLockEnabled: false" wasd-controls="acceleration: 20">
+        <a-cursor
+          id="cursor"
+          color="#fb923c"
+          fuse="false"
+          raycaster="objects: .interactivo">
+        </a-cursor>
+      </a-camera>
+    </a-entity>
+
+    <!-- ILUMINACIÓN DE COCINA CÁLIDA Y PROFESIONAL -->
+    <a-light type="ambient" color="#ffedd5" intensity="0.55"></a-light>
+    
+    <!-- Luces directas bajo la campana hacia los fogones -->
+    <a-light type="spot" position="0 3.8 -2.4" target="#fogon-target" color="#ffedd5" intensity="2.5" angle="50" penumbra="0.3"></a-light>
+    <a-light type="point" position="0 2.8 0.2" color="#f97316" intensity="0.8"></a-light>
+    <a-light type="point" position="-3.5 3 -2" color="#38bdf8" intensity="0.3"></a-light>
+
+    <!-- ========================================== -->
+    <!-- ESTRUCTURA DE LA COCINA INDUSTRIAL -->
+    <!-- ========================================== -->
+
+    <!-- Piso cerámico antideslizante de cocina (terracota rústica) -->
+    <a-plane
+      rotation="-90 0 0"
+      width="18"
+      height="18"
+      color="#7c2d12"
+      roughness="0.5"
+      metalness="0.1">
+    </a-plane>
+
+    <!-- Pared Frontal (Azulejos tipo Subway Tile con panel de acero inoxidable central) -->
+    <a-box position="0 3 -7" width="18" height="6" depth="0.3" color="#f8fafc"></a-box>
+    <a-box position="0 2.5 -6.82" width="8" height="3.5" depth="0.05" color="#cbd5e1" metalness="0.8" roughness="0.2"></a-box>
+
+    <!-- Paredes Laterales y Trasera -->
+    <a-box position="-8 3 0" width="0.3" height="6" depth="16" color="#f1f5f9"></a-box>
+    <a-box position="8 3 0" width="0.3" height="6" depth="16" color="#f1f5f9"></a-box>
+    <a-box position="0 3 7" width="18" height="6" depth="0.3" color="#e2e8f0"></a-box>
+
+    <!-- Techo con conductos industriales -->
+    <a-box position="0 6 0" width="18" height="0.3" depth="16" color="#94a3b8"></a-box>
+    <a-cylinder position="0 5.6 0" radius="0.4" height="16" rotation="0 0 90" color="#64748b" metalness="0.7"></a-cylinder>
+
+    <!-- ========================================== -->
+    <!-- BATERÍA DE FOGONES INDUSTRIALES Y CAMPANA -->
+    <!-- ========================================== -->
+    <a-entity id="fogones-area" position="0 0 -2.6">
+      
+      <!-- Target para la luz de la campana -->
+      <a-entity id="fogon-target" position="0 0.9 0"></a-entity>
+
+      <!-- Bloque de cocina industrial de acero inoxidable -->
+      <a-box position="0 0.45 0" width="3.2" height="0.9" depth="1.3" color="#475569" metalness="0.8" roughness="0.3"></a-box>
+      <a-box position="0 0.91 0" width="3.15" height="0.04" depth="1.25" color="#1e293b"></a-box>
+
+      <!-- Rejillas de hierro fundido de los 4 fogones -->
+      <a-box position="-0.9 0.94 -0.25" width="0.7" height="0.03" depth="0.55" color="#0f172a"></a-box>
+      <a-box position="-0.9 0.94 0.35" width="0.7" height="0.03" depth="0.55" color="#0f172a"></a-box>
+      <a-box position="0.9 0.94 -0.25" width="0.7" height="0.03" depth="0.55" color="#0f172a"></a-box>
+      <a-box position="0.9 0.94 0.35" width="0.7" height="0.03" depth="0.55" color="#0f172a"></a-box>
+
+      <!-- LLAMAS DE GAS AZUL Y NARANJA (ANIMADAS) -->
+      <a-cylinder
+        id="flame-1"
+        position="-0.9 0.96 0.35"
+        radius="0.16"
+        height="0.06"
+        color="#38bdf8"
+        emissive="#0284c7"
+        emissiveIntensity="1.8"
+        animation="property: scale; to: 1.1 1.3 1.1; dir: alternate; loop: true; dur: 200">
+      </a-cylinder>
+      <a-cylinder
+        id="flame-2"
+        position="0.9 0.96 -0.25"
+        radius="0.18"
+        height="0.07"
+        color="#f97316"
+        emissive="#ea580c"
+        emissiveIntensity="1.5"
+        animation="property: scale; to: 1.15 1.25 1.15; dir: alternate; loop: true; dur: 250">
+      </a-cylinder>
+
+      <!-- Sartén profesional con salteado de verduras -->
+      <a-cylinder
+        position="-0.9 1.03 0.35"
+        radius="0.25"
+        height="0.08"
+        color="#1e293b"
+        metalness="0.9"
+        class="interactivo"
+        onclick="mostrarNotif('Sartén antiadherente: Salteando chalotas y espárragos en mantequilla clarificada.')">
+      </a-cylinder>
+      <!-- Mango largo de acero de la sartén -->
+      <a-cylinder position="-0.9 1.06 0.68" radius="0.02" height="0.45" rotation="75 0 0" color="#64748b" metalness="0.9"></a-cylinder>
+      <!-- Verduras salteándose en el sartén -->
+      <a-sphere position="-0.95 1.06 0.32" radius="0.04" color="#ef4444"></a-sphere>
+      <a-sphere position="-0.85 1.06 0.38" radius="0.035" color="#22c55e"></a-sphere>
+      <a-sphere position="-0.9 1.06 0.36" radius="0.03" color="#eab308"></a-sphere>
+
+      <!-- Olla grande sopera (Stockpot) con caldo humeante -->
+      <a-cylinder
+        position="0.9 1.22 -0.25"
+        radius="0.28"
+        height="0.5"
+        color="#cbd5e1"
+        metalness="0.95"
+        class="interactivo"
+        onclick="mostrarNotif('Olla sopera (Fondo Oscuro): Reducción de ternera con hierbas aromáticas.')">
+      </a-cylinder>
+      <!-- Asas de la olla -->
+      <a-torus position="0.6 1.35 -0.25" radius="0.06" radius-tubular="0.015" rotation="0 90 0" color="#64748b"></a-torus>
+      <a-torus position="1.2 1.35 -0.25" radius="0.06" radius-tubular="0.015" rotation="0 90 0" color="#64748b"></a-torus>
+
+      <!-- Mandos de gas frontales (Perillas rojas y negras) -->
+      <a-cylinder position="-0.9 0.7 0.66" radius="0.04" height="0.04" rotation="90 0 0" color="#ef4444"></a-cylinder>
+      <a-cylinder position="-0.5 0.7 0.66" radius="0.04" height="0.04" rotation="90 0 0" color="#0f172a"></a-cylinder>
+      <a-cylinder position="0.5 0.7 0.66" radius="0.04" height="0.04" rotation="90 0 0" color="#0f172a"></a-cylinder>
+      <a-cylinder position="0.9 0.7 0.66" radius="0.04" height="0.04" rotation="90 0 0" color="#ef4444"></a-cylinder>
+
+      <!-- CAMPANA EXTRACTORA INDUSTRIAL DE ACERO SOBRE LOS FOGONES -->
+      <a-entity position="0 3.6 0">
+        <a-box position="0 0 0" width="3.6" height="0.6" depth="1.6" color="#64748b" metalness="0.8"></a-box>
+        <!-- Filtros metálicos inclinados -->
+        <a-plane position="0 -0.28 0" rotation="90 0 0" width="3.4" height="1.4" color="#334155" metalness="0.9"></a-plane>
+        <!-- Conducto hacia el techo -->
+        <a-cylinder position="0 0.9 0" radius="0.45" height="1.2" color="#64748b" metalness="0.8"></a-cylinder>
+      </a-entity>
+
+      <a-text value="ZONA DE FOGONES INDUSTRIAL" position="-1.4 1.8 0" scale="0.4 0.4 0.4" color="#fb923c"></a-text>
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- ISLA CENTRAL DE PREPARACIÓN Y EMPLATADO -->
+    <!-- ========================================== -->
+    <a-entity id="isla-central" position="0 0 0.5">
+      
+      <!-- Mesón de acero inoxidable -->
+      <a-box position="0 0.45 0" width="3.4" height="0.9" depth="1.3" color="#475569" metalness="0.85" roughness="0.2"></a-box>
+      <a-box position="0 0.91 0" width="3.5" height="0.05" depth="1.4" color="#cbd5e1" metalness="0.95" roughness="0.1"></a-box>
+      <!-- Patas de soporte cilíndricas de acero -->
+      <a-cylinder position="-1.6 0.4 0.55" radius="0.04" height="0.8" color="#64748b"></a-cylinder>
+      <a-cylinder position="1.6 0.4 0.55" radius="0.04" height="0.8" color="#64748b"></a-cylinder>
+      <a-cylinder position="-1.6 0.4 -0.55" radius="0.04" height="0.8" color="#64748b"></a-cylinder>
+      <a-cylinder position="1.6 0.4 -0.55" radius="0.04" height="0.8" color="#64748b"></a-cylinder>
+
+      <!-- TABLA DE CORTE DE MADERA DE HAYA -->
+      <a-box position="-0.75 0.96 0" width="0.85" height="0.05" depth="0.55" color="#b45309" roughness="0.8" class="interactivo" onclick="mostrarNotif('Tabla de corte de madera maciza para Mise en Place.')"></a-box>
+
+      <!-- Cuchillo de Chef Cebollero profesional -->
+      <a-box position="-0.75 0.99 0.2" width="0.32" height="0.015" depth="0.06" color="#e2e8f0" metalness="0.95"></a-box>
+      <a-cylinder position="-0.94 0.99 0.2" radius="0.018" height="0.12" rotation="0 0 90" color="#0f172a"></a-cylinder>
+
+      <!-- Ingredientes frescos sobre la tabla -->
+      <a-sphere position="-0.65 1.01 0.0" radius="0.05" color="#ef4444"></a-sphere> <!-- Tomate cherry -->
+      <a-sphere position="-0.78 1.01 -0.05" radius="0.045" color="#ef4444"></a-sphere>
+      <a-cylinder position="-0.6 1.0 0.1" radius="0.02" height="0.18" rotation="0 45 90" color="#16a34a"></a-cylinder> <!-- Espárrago verde -->
+      <a-sphere position="-0.85 1.0 0.05" radius="0.035" color="#f8fafc"></a-sphere> <!-- Cabeza de ajo -->
+
+      <!-- Molinillo de pimienta de madera y aceitera de cristal -->
+      <a-cylinder position="-0.2 1.1 -0.35" radius="0.035" height="0.3" color="#78350f" class="interactivo" onclick="mostrarNotif('Pimienta negra recién molida de Madagascar.')"></a-cylinder>
+      <a-cylinder position="-0.05 1.08 -0.35" radius="0.04" height="0.25" color="#fef08a" opacity="0.85"></a-cylinder>
+
+      <!-- PLATO GOURMET DE ALTA COCINA (HAUTE CUISINE) -->
+      <a-entity position="0.75 0.94 0" class="interactivo" onclick="mostrarNotif('Plato Terminado: Solomillo de ternera en salsa de oporto y espárragos caramelizados.')">
+        <!-- Plato redondo de pizarra negra -->
+        <a-cylinder radius="0.36" height="0.025" color="#0f172a" roughness="0.9"></a-cylinder>
         
-                <a-camera>
+        <!-- Medallón de solomillo sellado -->
+        <a-cylinder position="0 0.04 0" radius="0.13" height="0.06" color="#451a03"></a-cylinder>
         
-                    <!-- CURSOR -->
-                    <a-cursor
-                        color="black"
-                        fuse="true"
-                        fuse-timeout="700">
-                    </a-cursor>
+        <!-- Reducción de salsa glaseada (anillo de reducción de vino) -->
+        <a-torus position="0 0.02 0" radius="0.22" radius-tubular="0.015" rotation="90 0 0" color="#7f1d1d"></a-torus>
         
-                </a-camera>
-        
-            </a-entity>
-        
-            <!-- PISO -->
-            <a-plane
-                rotation="-90 0 0"
-                width="40"
-                height="40"
-                color="#d7d7d7">
-            </a-plane>
-        
-            <!-- PAREDES -->
-            <a-box position="0 4 -15" width="30" height="8" depth="0.5" color="#ffffff"></a-box>
-        
-            <!-- MOSTRADOR -->
-            <a-box position="0 1 -2" width="6" height="2" depth="2" color="#6d4c41"></a-box>
-        
-            <!-- ESTANTERIAS -->
-            <a-box position="-8 2 -8" width="6" height="4" depth="1" color="#8B4513"></a-box>
-            <a-box position="8 2 -8" width="6" height="4" depth="1" color="#8B4513"></a-box>
-        
-            <!-- PRODUCTOS -->
-            <a-box class="producto" position="-10 4 -8" color="red"></a-box>
-            <a-box class="producto" position="-8 4 -8" color="blue"></a-box>
-            <a-box class="producto" position="-6 4 -8" color="green"></a-box>
-             
-            <a-box class="producto" position="10 4 +8" color="red"></a-box>
-            <a-box class="producto" position="8 4 +8" color="blue"></a-box>
-            <a-box class="producto" position="6 4 +8" color="green"></a-box>
-        
-            <a-sphere class="producto" position="-10 2 -8" radius="0.5" color="yellow"></a-sphere>
-            <a-sphere class="producto" position="-8 2 -8" radius="0.5" color="orange"></a-sphere>
-        
-            
-            <a-cylinder class="producto" position="-8 -2 8" radius="0.5" height="1" color="brown"></a-cylinder>
-            <a-cylinder class="producto" position="-10 -2 8" radius="0.5" height="1" color="aquamarine"></a-cylinder>
-        
-            <!-- TEXTO -->
-            <a-text
-                value="SUPERMARKET VR"
-                position="-5 6 -10"
-                scale="3 3 3"
-                color="black">
-            </a-text>
-        
-            <!-- LUCES -->
-            <a-light type="ambient" intensity="1"></a-light>
-            <a-light type="point" intensity="1.5" position="0 8 0"></a-light>
-        
-            <!-- OBJETO ANIMADO -->
-            <a-torus
-                position="0 5 -6"
-                radius="1"
-                radius-tubular="0.1"
-                color="#2196F3"
-                animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
-            </a-torus>
-        
-        </a-scene>
-        <script src="app.js"></script>
+        <!-- Guarnición de espárragos y microbrotes -->
+        <a-cylinder position="0.08 0.08 0.06" radius="0.01" height="0.22" rotation="30 45 90" color="#15803d"></a-cylinder>
+        <a-cylinder position="0.04 0.08 -0.06" radius="0.01" height="0.22" rotation="-20 15 90" color="#15803d"></a-cylinder>
+        <a-sphere position="0 0.08 0" radius="0.02" color="#eab308"></a-sphere>
+
+        <a-text value="PLATO GOURMET #04" position="-0.38 0.35 0" scale="0.3 0.3 0.3" color="#facc15"></a-text>
+      </a-entity>
+
+      <!-- Timbre de servicio metálico (Service Bell) -->
+      <a-entity position="1.3 0.94 0.3" class="interactivo" onclick="ringServiceBell()">
+        <a-sphere position="0 0.05 0" radius="0.06" theta-start="0" theta-length="90" color="#e2e8f0" metalness="0.95"></a-sphere>
+        <a-cylinder position="0 0.1 0" radius="0.012" height="0.04" color="#0f172a"></a-cylinder>
+        <a-cylinder position="0 0.01 0" radius="0.08" height="0.02" color="#0f172a"></a-cylinder>
+      </a-entity>
+
+      <!-- Riel con comandas de pedidos (Kitchen Order Tickets) -->
+      <a-box position="0 1.25 0.65" width="2.2" height="0.06" depth="0.04" color="#94a3b8" metalness="0.9"></a-box>
+      <a-box position="-0.6 1.1 0.66" width="0.18" height="0.24" depth="0.01" color="#ffffff"></a-box>
+      <a-text value="MESA 4:\n1x Solomillo\n1x Risotto" position="-0.68 1.12 0.68" scale="0.14 0.14 0.14" color="#0f172a"></a-text>
+
+      <a-box position="0.2 1.1 0.66" width="0.18" height="0.24" depth="0.01" color="#ffffff"></a-box>
+      <a-text value="MESA 2:\n2x Tartar Atun\n1x Tiramisu" position="0.12 1.12 0.68" scale="0.14 0.14 0.14" color="#0f172a"></a-text>
+
+      <a-text value="MESA CENTRAL DE MISE EN PLACE" position="-1.2 1.7 0" scale="0.38 0.38 0.38" color="#ffffff"></a-text>
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- CHEF PROFESIONAL EN SU PUESTO DE TRABAJO -->
+    <!-- ========================================== -->
+    <a-entity position="-1.8 0 0.3" rotation="0 80 0">
+      <!-- Cuerpo con chaqueta de chef blanca cruzada -->
+      <a-cylinder position="0 1.05 0" radius="0.28" height="1.3" color="#f8fafc"></a-cylinder>
+      <!-- Delantal negro de cocina -->
+      <a-cylinder position="0 0.85 0.05" radius="0.29" height="0.9" theta-start="0" theta-length="180" color="#0f172a"></a-cylinder>
+      
+      <!-- Cabeza del Chef -->
+      <a-sphere position="0 1.82 0" radius="0.18" color="#fbcfe8"></a-sphere>
+      
+      <!-- Clásico Gorro de Chef (Toque Blanche) alto -->
+      <a-cylinder position="0 2.08 0" radius="0.19" height="0.35" color="#ffffff"></a-cylinder>
+      <a-sphere position="0 2.25 0" radius="0.22" color="#ffffff"></a-sphere>
+
+      <!-- Brazos del chef con pinzas de emplatar -->
+      <a-cylinder position="0.15 1.35 0.35" radius="0.06" height="0.5" rotation="55 -25 0" color="#ffffff"></a-cylinder>
+      <a-sphere position="0.2 1.22 0.58" radius="0.06" color="#fbcfe8"></a-sphere>
+      <a-cylinder position="0.22 1.25 0.65" radius="0.006" height="0.18" rotation="80 0 0" color="#cbd5e1" metalness="0.9"></a-cylinder>
+
+      <a-text value="Chef Ejecutivo" position="-0.45 2.5 0" scale="0.4 0.4 0.4" color="#facc15"></a-text>
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- HORNO INDUSTRIAL DE CONVECCIÓN -->
+    <!-- ========================================== -->
+    <a-entity position="-3.5 0 -2.6" rotation="0 45 0" class="interactivo" onclick="mostrarNotif('Horno de Convección: Horneando pan rústico de masa madre a 180°C.')">
+      <a-box position="0 1.0 0" width="1.1" height="1.8" depth="1.0" color="#334155" metalness="0.8"></a-box>
+      <!-- Ventana de vidrio del horno con luz interna cálida -->
+      <a-box position="0 1.2 0.52" width="0.75" height="0.65" depth="0.05" color="#f97316" opacity="0.6" emissive="#ea580c" emissiveIntensity="0.6"></a-box>
+      <!-- Bandeja interna con panes dorados -->
+      <a-sphere position="-0.15 1.15 0.4" radius="0.08" color="#d97706"></a-sphere>
+      <a-sphere position="0.15 1.15 0.4" radius="0.08" color="#d97706"></a-sphere>
+      <!-- Panel de control digital -->
+      <a-box position="0 0.5 0.52" width="0.75" height="0.25" depth="0.05" color="#0f172a"></a-box>
+      <a-text value="HORNO 180 C" position="-0.3 0.52 0.56" scale="0.25 0.25 0.25" color="#22c55e"></a-text>
+    </a-entity>
+
+    <!-- ========================================== -->
+    <!-- ESTANTERÍAS DE ESPECIAS Y UTENSILIOS COLGADOS -->
+    <!-- ========================================== -->
+    <a-entity position="3.5 0 -2.6" rotation="0 -45 0">
+      <a-box position="0 1.2 0" width="1.4" height="2.2" depth="0.6" color="#475569" metalness="0.7"></a-box>
+      <!-- Frascos de especias alineados -->
+      <a-cylinder position="-0.4 1.6 0.15" radius="0.05" height="0.18" color="#ef4444"></a-cylinder> <!-- Pimentón -->
+      <a-cylinder position="-0.15 1.6 0.15" radius="0.05" height="0.18" color="#eab308"></a-cylinder> <!-- Cúrcuma -->
+      <a-cylinder position="0.1 1.6 0.15" radius="0.05" height="0.18" color="#16a34a"></a-cylinder> <!-- Orégano -->
+      <a-cylinder position="0.35 1.6 0.15" radius="0.05" height="0.18" color="#38bdf8"></a-cylinder> <!-- Sal marina -->
+      <a-text value="ESPECIAS GOURMET" position="-0.5 1.9 0.2" scale="0.28 0.28 0.28" color="#ffffff"></a-text>
+    </a-entity>
+
+    <!-- Colgador de cazos y sartenes en el techo -->
+    <a-cylinder position="0 4.4 0.5" radius="0.03" height="2.6" rotation="0 0 90" color="#64748b" metalness="0.9"></a-cylinder>
+    <!-- Cazos colgados -->
+    <a-cylinder position="-0.6 3.9 0.5" radius="0.12" height="0.08" color="#b45309" metalness="0.9"></a-cylinder> <!-- Sartén de cobre -->
+    <a-cylinder position="0.6 3.9 0.5" radius="0.14" height="0.08" color="#334155" metalness="0.9"></a-cylinder>
+
+  </a-scene>
+
+  <script>
+    let audioCtx = null;
+    let flamesActive = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    // Sonido de timbre de cocina ("Ding!")
+    function ringServiceBell() {
+      initAudio();
+      mostrarNotif('¡TIMBRE DE PASE! ¡Orden de la Mesa 4 lista para servir!');
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2000, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    // Regular llamas de los fogones
+    function toggleStoveFlames() {
+      flamesActive = !flamesActive;
+      const f1 = document.getElementById('flame-1');
+      const f2 = document.getElementById('flame-2');
+      const tempEl = document.getElementById('k-temp');
+
+      if (flamesActive) {
+        if (f1) f1.setAttribute('visible', 'true');
+        if (f2) f2.setAttribute('visible', 'true');
+        if (tempEl) tempEl.innerText = '215 °C';
+        mostrarNotif('Fogones encendidos a fuego vivo (215°C).');
+      } else {
+        if (f1) f1.setAttribute('visible', 'false');
+        if (f2) f2.setAttribute('visible', 'false');
+        if (tempEl) tempEl.innerText = '50 °C (Apagado)';
+        mostrarNotif('Fogones apagados. Manteniendo calor residual.');
+      }
+    }
+
+    function mostrarNotif(texto) {
+      const box = document.getElementById('notif-box');
+      box.innerText = texto;
+      box.style.opacity = '1';
+      clearTimeout(window.notifTimeout);
+      window.notifTimeout = setTimeout(() => {
+        box.style.opacity = '0';
+      }, 3500);
+    }
+  </script>
 </body>
 </html>
